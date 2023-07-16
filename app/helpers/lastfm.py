@@ -1,7 +1,22 @@
+from random import sample
+from typing import Any, List
+
 import requests
 
-from random import sample
-from typing import List, Any
+
+def get_artwork(artist: str, song: str) -> str:
+    """
+    Get artwork from iTunes API
+    """
+    term = f"{'+'.join(artist.split())}+{'+'.join(song.split())}"
+    req = requests.get(
+        f"https://itunes.apple.com/search?term={term}&entity=song&limit=1&attribute=artistTerm"
+    )
+    data = req.json()
+    if len(data["results"]) == 0:
+        return "https://i.imgur.com/kzNpjvh.png"
+    return data["results"][0]["artworkUrl100"]
+
 
 def get_song(emotion: str, api_key: str) -> str:
     """
@@ -19,6 +34,7 @@ def get_song(emotion: str, api_key: str) -> str:
     data = response.json()
     return serialize_song_data(sample(data["tracks"]["track"], 10))
 
+
 def serialize_song_data(data: List[Any]):
     """
     Serialize song data
@@ -28,7 +44,7 @@ def serialize_song_data(data: List[Any]):
             "name": song["name"],
             "artist": song["artist"]["name"],
             "url": song["url"],
-            "image_url": song["image"][2]["#text"]
+            "image_url": get_artwork(song["artist"]["name"], song["name"]),
         }
         for song in data
     ]
