@@ -7,9 +7,8 @@ from flask_cors import CORS
 from app.helpers.emotion_analysis import get_emotion
 from app.helpers.lastfm import get_song
 
-application = Flask(__name__)
+app = Flask(__name__)
 
-app = application
 cors = CORS(app)
 app.config["CORS_HEADERS"] = "Content-Type"
 
